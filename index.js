@@ -15,14 +15,6 @@ function generateRandomString(length) {
   return crypto.randomBytes(length).toString('hex');
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-    <Analytics />
-  </React.StrictMode>
-);
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
