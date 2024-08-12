@@ -51,7 +51,7 @@ fastify.get('/', (request, reply) => {
   reply.sendFile('index.html');
 });
 
-fastify.post('/upload', {
+fastify.post('/tmp','/upload', {
   preValidation: fastify.cfTurnstile,
   config: {
     rateLimit: {
