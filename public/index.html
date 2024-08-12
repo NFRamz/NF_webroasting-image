@@ -263,13 +263,6 @@
                     form.reset();
                     preview.src = '';
                     roast.innerHTML = `Traffic lagi rame, sabar sebentar pls 😭😭<br><small>${data.message}</small>`;
-                }else if(data.statusCode == 500){
-                    preview.style.opacity = 1;
-                    preview.style.height = "100%";
-                    loading.style.opacity = 0;
-                    form.reset();
-                    preview.src = '';
-                    roast.innerHTML = `ERROR 😭😭<br><small>${data.message}</small>`;
                 }
                 else {
                     loading.style.opacity = 0;
