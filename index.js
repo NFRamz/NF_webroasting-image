@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import cfTurnstile from 'fastify-cloudflare-turnstile';
 import { getRoast } from './roast.js';
 import fastifyRateLimit from '@fastify/rate-limit';
+import { Analytics } from "@vercel/analytics/react";
 
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString('hex');
