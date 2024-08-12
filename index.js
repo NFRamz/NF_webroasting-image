@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import cfTurnstile from 'fastify-cloudflare-turnstile';
 import { getRoast } from './roast.js';
 import fastifyRateLimit from '@fastify/rate-limit';
+import fastifyCookie from '@fastify/cookie'; // Add this line
 
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString('hex');
@@ -25,7 +26,7 @@ const fastify = Fastify({
 await fastify.register(fastifyRateLimit, {
   max: 50,
   timeWindow: '1 minute'
-});
+})
 
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, 'public'),
@@ -40,10 +41,10 @@ fastify.register(fastifyMultipart, {
 fastify.register(cfTurnstile, {
   sitekey: process.env.TURNSTILE_KEY,
   privatekey: process.env.TURNSTILE_SECRET,
-});
+})
 
 fastify.register(fastifyCors, {
-  origin: ['https://nf-webroasting.vercel.app'],
+  origin: ['https:nf-webroasting.vercel.app'],
 });
 
 fastify.get('/', (request, reply) => {
@@ -70,7 +71,7 @@ fastify.post('/upload', {
       }
 
       const randomFilename = generateRandomString(16) + path.extname(part.filename);
-      const uploadDir = path.join('/tmp', 'uploads'); // Menggunakan direktori sementara di /tmp
+      const uploadDir = path.join(__dirname, 'uploads');
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
       }
@@ -93,11 +94,11 @@ fastify.post('/upload', {
     }
   }
 
-  const roast = await getRoast(file);
+  const roast = await getRoast(file)
 
   if (await roast) {
     if (fs.existsSync(file.path)) {
-      fs.unlinkSync(file.path); // Hapus file setelah diproses
+      fs.unlinkSync(file.path)
     }
   }
 
@@ -111,6 +112,43 @@ fastify.put('/cfs', (req, res) => {
   res.send(Buffer.from(process.env.TURNSTILE_KEY).toString('base64'));
 });
 
+//start count
+fastify.register(fastifyCookie); // Register the cookie plugin
+
+const visitorFilePath = path.join(__dirname, 'visitors.json');
+
+// Initialize visitors.json if it doesn't exist
+if (!fs.existsSync(visitorFilePath)) {
+  fs.writeFileSync(visitorFilePath, JSON.stringify({ count: 0 }));
+}
+
+// Function to read and update the visitor count
+const updateVisitorCount = () => {
+  const data = JSON.parse(fs.readFileSync(visitorFilePath));
+  data.count += 1;
+  fs.writeFileSync(visitorFilePath, JSON.stringify(data));
+  return data.count;
+};
+
+// Middleware to check for unique visitors
+fastify.addHook('onRequest', (request, reply, done) => {
+  const visitorId = request.cookies.visitorId;
+
+  if (!visitorId) {
+    const uniqueId = Date.now() + Math.random().toString(36).substring(2);
+    reply.setCookie('visitorId', uniqueId, { path: '/', httpOnly: true });
+    const newCount = updateVisitorCount();
+    request.visitorCount = newCount;
+  } else {
+    const data = JSON.parse(fs.readFileSync(visitorFilePath));
+    request.visitorCount = data.count;
+  }
+  done();
+});
+fastify.get('/visitor-count', (request, reply) => {
+  reply.send({ count: request.visitorCount });
+});
+//end count
 const start = async () => {
   const port = process.env.PORT || 3000;
   try {

@@ -201,7 +201,19 @@
         <img src="https://img.shields.io/badge/-Node.js-339933?style=flat&logo=node.js&logoColor=white" alt="Node.js Badge">
     </a>
 
+    <p id="visitorCount" class="count">Loading visitors count...</p>
 </footer>
+
+<script>
+    fetch('/visitor-count')
+        .then((response) => response.json())
+        .then((data) => {
+            document.getElementById('visitorCount').textContent = `Visitors: ${data.count}`;
+        })
+        .catch((error) => {
+            console.error('Error fetching visitor count:', error);
+        });
+</script>
 
 <script
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
@@ -233,7 +245,7 @@
         if (!cfttoken) {
             loading.style.opacity = 0;
             roast.innerHTML =
-                "Dicentang dulu ya captcha nya.";
+                "Chaptchanya dicentang dulu yaa, dan reload ulang webnya..";
             return;
         }
 

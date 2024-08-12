@@ -149,7 +149,6 @@ button:hover .star-6 {
     fill: #fffdef;
 }
 
-
 /* From Uiverse.io by boryanakrasteva */
 .btn-container {
     display: flex;
@@ -204,4 +203,8 @@ button:hover .star-6 {
     100% {
         background-position: 0% 10%
     }
+}
+
+.count {
+    color: #13171f;
 }
