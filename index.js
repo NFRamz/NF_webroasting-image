@@ -51,7 +51,7 @@ fastify.get('/', (request, reply) => {
   reply.sendFile('index.html');
 });
 
-fastify.post('/tmp','/upload', {
+fastify.post('/upload', {
   preValidation: fastify.cfTurnstile,
   config: {
     rateLimit: {
@@ -71,7 +71,7 @@ fastify.post('/tmp','/upload', {
       }
 
       const randomFilename = generateRandomString(16) + path.extname(part.filename);
-      const uploadDir = path.join(__dirname, 'uploads');
+      const uploadDir = path.join('/tmp', 'uploads');
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
       }
