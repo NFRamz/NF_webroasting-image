@@ -25,7 +25,7 @@ const fastify = Fastify({
 await fastify.register(fastifyRateLimit, {
   max: 50,
   timeWindow: '1 minute'
-})
+});
 
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, 'public'),
@@ -40,10 +40,10 @@ fastify.register(fastifyMultipart, {
 fastify.register(cfTurnstile, {
   sitekey: process.env.TURNSTILE_KEY,
   privatekey: process.env.TURNSTILE_SECRET,
-})
+});
 
 fastify.register(fastifyCors, {
-  origin: ['https:nf-webroasting.vercel.app'],
+  origin: ['https://nf-webroasting.vercel.app'],
 });
 
 fastify.get('/', (request, reply) => {
@@ -70,7 +70,7 @@ fastify.post('/upload', {
       }
 
       const randomFilename = generateRandomString(16) + path.extname(part.filename);
-      const uploadDir = path.join(__dirname, 'uploads');
+      const uploadDir = path.join('/tmp', 'uploads'); // Menggunakan direktori sementara di /tmp
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
       }
@@ -93,11 +93,11 @@ fastify.post('/upload', {
     }
   }
 
-  const roast = await getRoast(file)
+  const roast = await getRoast(file);
 
   if (await roast) {
     if (fs.existsSync(file.path)) {
-      fs.unlinkSync(file.path)
+      fs.unlinkSync(file.path); // Hapus file setelah diproses
     }
   }
 
