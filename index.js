@@ -43,7 +43,7 @@ fastify.register(cfTurnstile, {
 })
 
 fastify.register(fastifyCors, {
-  origin: [process.env.CORS_ORIGIN]
+  origin: ['https:nf-webroasting.vercel.app'],
 });
 
 fastify.get('/', (request, reply) => {

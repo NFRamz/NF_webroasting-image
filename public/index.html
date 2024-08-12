@@ -32,7 +32,7 @@
 
         <!-- bUTTON ROAST -->
         <div class="container turnstile"></div>
-        <button>
+        <button class="roast_button">
             Roasting Foto
             <div class="star-1">
                 <svg
@@ -187,7 +187,7 @@
             </button>
         </div>
     </div>
-    <br>Dibuat menggunakan:</br>
+    <br>Build With:</br>
     <a href="https://github.com/search?q=user%3Azmcx16&type=Repositories">
         <img src="https://img.shields.io/badge/-HTML-E34F26?style=flat&logo=html5&logoColor=white" alt="HTML Badge">
     </a>
@@ -233,7 +233,7 @@
         if (!cfttoken) {
             loading.style.opacity = 0;
             roast.innerHTML =
-                "Captcha is not ready. Please complete the captcha before submitting.";
+                "Dicentang dulu ya captcha nya.";
             return;
         }
 
@@ -243,7 +243,7 @@
         data.append("cf-turnstile-response", cfttoken);
         data.append("file", photo.files[0]);
 
-        fetch("https://nf-webroasting.vercel.app/upload", {
+        fetch("/upload", {
             method: "POST",
             body: data,
         })
@@ -263,7 +263,15 @@
                     form.reset();
                     preview.src = '';
                     roast.innerHTML = `Traffic lagi rame, sabar sebentar pls 😭😭<br><small>${data.message}</small>`;
-                } else {
+                }else if(data.statusCode == 500){
+                    preview.style.opacity = 1;
+                    preview.style.height = "100%";
+                    loading.style.opacity = 0;
+                    form.reset();
+                    preview.src = '';
+                    roast.innerHTML = `ERROR 😭😭<br><small>${data.message}</small>`;
+                }
+                else {
                     loading.style.opacity = 0;
                     roast.innerHTML =
                         "Roastingan terlalu brutal sampe kena sensor 🔥🔥💀💀🤣🤣🤣\nKlik Roast buat coba lagi";
